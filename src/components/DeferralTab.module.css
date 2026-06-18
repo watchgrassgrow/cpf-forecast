@@ -1,0 +1,23 @@
+.subtitle { font-size: 12px; color: var(--slate-500); margin-bottom: 12px; }
+.subtitle strong { color: var(--slate-700); }
+
+.deferCards { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; margin-bottom: 16px; }
+
+.dCard {
+  border: 1px solid var(--slate-200); border-radius: var(--radius-md);
+  padding: 10px 6px; text-align: center; transition: border-color .15s;
+}
+.dCardSel { border-color: var(--teal); border-width: 2px; background: var(--teal-light); }
+
+.dAge { font-size: 10px; color: var(--slate-400); margin-bottom: 4px; }
+.dPm { font-size: 15px; font-weight: 600; font-family: var(--font-mono); color: var(--slate-800); }
+.dCardSel .dPm { color: var(--teal-deep); }
+.dBonus { font-size: 10px; color: var(--teal); font-weight: 500; margin-top: 2px; }
+.dSub { font-size: 9px; color: var(--slate-400); }
+
+.chartWrap { margin-top: 8px; }
+.chartLabel { font-size: 11px; color: var(--slate-400); margin-bottom: 8px; }
+
+.legend { display: flex; gap: 14px; margin-top: 8px; flex-wrap: wrap; }
+.legItem { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--slate-500); }
+.legSwatch { width: 12px; height: 3px; border-radius: 2px; flex-shrink: 0; }
