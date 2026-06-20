@@ -1,0 +1,65 @@
+.dashboard { padding: 24px 28px; max-width: 1100px; }
+
+.header {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; margin-bottom: 20px; gap: 12px;
+}
+.title { font-size: 20px; font-weight: 600; color: var(--slate-800); letter-spacing: -0.3px; }
+.sub { font-size: 12px; color: var(--slate-400); margin-top: 3px; }
+
+.kpiGrid {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px; margin-bottom: 8px;
+}
+
+.estimateNote {
+  font-size: 10.5px; color: var(--slate-400); line-height: 1.6;
+  margin-bottom: 18px; padding: 8px 12px;
+  background: var(--slate-50); border-radius: var(--radius-sm);
+  border-left: 2px solid var(--slate-300);
+}
+.estimateNote strong { color: var(--slate-600); font-weight: 600; }
+.estimateNote a { color: var(--teal); }
+
+.chartCard {
+  border: 1px solid var(--slate-200); border-radius: var(--radius-lg);
+  padding: 16px 18px; margin-bottom: 18px; background: white;
+  box-shadow: var(--shadow-sm);
+}
+.chartHeader {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; margin-bottom: 10px; gap: 12px;
+}
+.chartTitle { font-size: 14px; font-weight: 600; color: var(--slate-800); }
+.chartSub { font-size: 11px; color: var(--slate-400); margin-top: 2px; }
+
+.legend { display: flex; gap: 12px; align-items: center; flex-shrink: 0; }
+.legItem { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--slate-500); }
+.legSwatch { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+.chartArea { position: relative; height: 240px; margin-bottom: 8px; }
+
+.milestones { display: flex; gap: 18px; }
+.msItem { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--slate-400); }
+.msLine { width: 16px; height: 0; border-top: 2px dashed; flex-shrink: 0; }
+
+.tabs {
+  display: flex; gap: 0; border-bottom: 1px solid var(--slate-200);
+  margin-bottom: 16px;
+}
+.tab {
+  font-size: 12px; padding: 8px 16px; cursor: pointer;
+  color: var(--slate-400); background: none;
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+  transition: all .15s; white-space: nowrap;
+}
+.tab:hover { color: var(--slate-600); }
+.tabOn { color: var(--teal) !important; border-bottom-color: var(--teal); font-weight: 600; }
+
+.tabBody { margin-bottom: 24px; }
+
+.disclaimer {
+  font-size: 10px; color: var(--slate-400); line-height: 1.6;
+  border-top: 1px solid var(--slate-200); padding-top: 12px;
+}
+.disclaimer a { color: var(--teal); }
