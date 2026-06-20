@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { Chart, LineController, LineElement, PointElement, CategoryScale, LinearScale, Tooltip, type ChartConfiguration } from 'chart.js';
+import { estimateCpfLifePayout } from '../engine/cpfLife';
 import type { CpfPlan } from '../types';
 import styles from './DeferralTab.module.css';
 
@@ -10,13 +11,8 @@ interface Props {
   plan: CpfPlan;
   selectedAge: number;
   planHorizon: number;
-}
-
-const PLAN_RATIO: Record<CpfPlan, number> = { Standard: 1, Escalating: 0.88, Basic: 1.08 };
-
-function calcPayout(ra: number, plan: CpfPlan, age: number): number {
-  const factor = 8.08 * Math.pow(1.065, age - 65) * PLAN_RATIO[plan];
-  return Math.round((ra / 1000) * factor);
+  inflAdj: boolean;
+  inflAtPayout: number;
 }
 
 function calcCumulative(pm: number, plan: CpfPlan, startAge: number, currentAge: number): number {
@@ -30,10 +26,9 @@ function calcCumulative(pm: number, plan: CpfPlan, startAge: number, currentAge:
   return Math.round(cum);
 }
 
-export default function DeferralTab({ raAtPayoutStart, plan, selectedAge, planHorizon }: Props) {
+export default function DeferralTab({ raAtPayoutStart, plan, selectedAge, planHorizon, inflAdj, inflAtPayout }: Props) {
   const chartRef = useRef<HTMLCanvasElement>(null);
   const chartInstance = useRef<Chart | null>(null);
-
   const ages = [65, 66, 67, 68, 69, 70];
 
   useEffect(() => {
@@ -45,10 +40,14 @@ export default function DeferralTab({ raAtPayoutStart, plan, selectedAge, planHo
     const colors = ['#378ADD', '#1D9E75', '#BA7517'];
 
     const datasets = [65, 67, 70].map((startAge, i) => {
-      const pm = calcPayout(raAtPayoutStart, plan, startAge);
+      // Single source of truth: same engine function as the KPI cards and PlanComparison.
+      const pm = estimateCpfLifePayout(raAtPayoutStart, plan, startAge);
       return {
         label: `Start age ${startAge}`,
-        data: ageRange.map(a => calcCumulative(pm, plan, startAge, a)),
+        data: ageRange.map(a => {
+          const nominal = calcCumulative(pm, plan, startAge, a);
+          return inflAdj ? Math.round(nominal / inflAtPayout) : nominal;
+        }),
         borderColor: colors[i],
         borderWidth: 2,
         borderDash: i > 0 ? [5, 3] : [],
@@ -70,7 +69,7 @@ export default function DeferralTab({ raAtPayoutStart, plan, selectedAge, planHo
           tooltip: {
             callbacks: {
               title: i => `Age ${i[0].label}`,
-              label: i => `$${Math.round(i.raw as number).toLocaleString('en-SG')} cumul. — ${i.dataset.label}`,
+              label: i => `$${Math.round(i.raw as number).toLocaleString('en-SG')} cumul.${inflAdj ? ' (today\'s $)' : ''} — ${i.dataset.label}`,
             },
           },
         },
@@ -93,35 +92,41 @@ export default function DeferralTab({ raAtPayoutStart, plan, selectedAge, planHo
 
     chartInstance.current = new Chart(chartRef.current, config);
     return () => { chartInstance.current?.destroy(); chartInstance.current = null; };
-  }, [raAtPayoutStart, plan, planHorizon]);
+  }, [raAtPayoutStart, plan, planHorizon, inflAdj, inflAtPayout]);
 
   return (
     <div>
       <p className={styles.subtitle}>
-        Monthly payout by start age · <strong>{plan}</strong> plan · same RA balance (${raAtPayoutStart.toLocaleString('en-SG')})
+        Monthly payout by start age · <strong>{plan}</strong> plan · same RA balance ($
+        {Math.round(inflAdj ? raAtPayoutStart / inflAtPayout : raAtPayoutStart).toLocaleString('en-SG')}
+        {inflAdj ? ' today\'s $' : ''})
       </p>
       <div className={styles.deferCards}>
         {ages.map(age => {
-          const pm = calcPayout(raAtPayoutStart, plan, age);
+          const pmNominal = estimateCpfLifePayout(raAtPayoutStart, plan, age);
+          const pmDisplay = Math.round(inflAdj ? pmNominal / inflAtPayout : pmNominal);
           const bonus = age > 65 ? `+${Math.round((Math.pow(1.065, age - 65) - 1) * 100)}%` : 'Base';
           const isSelected = age === selectedAge;
           return (
             <div key={age} className={`${styles.dCard} ${isSelected ? styles.dCardSel : ''}`}>
               <div className={styles.dAge}>Age {age}</div>
-              <div className={styles.dPm}>${pm.toLocaleString('en-SG')}</div>
+              <div className={styles.dPm}>${pmDisplay.toLocaleString('en-SG')}</div>
               <div className={styles.dBonus}>{bonus}</div>
-              <div className={styles.dSub}>/month</div>
+              <div className={styles.dSub}>/month{inflAdj ? ' today\'s $' : ''}</div>
             </div>
           );
         })}
       </div>
       <div className={styles.chartWrap}>
-        <p className={styles.chartLabel}>Cumulative payouts over time — start age 65 vs 67 vs 70</p>
+        <p className={styles.chartLabel}>
+          Cumulative payouts over time — start age 65 vs 67 vs 70
+          {inflAdj && " · inflation-adjusted"}
+        </p>
         <div style={{ position: 'relative', height: 180 }}>
           <canvas ref={chartRef} />
         </div>
         <div className={styles.legend}>
-          {[['#378ADD', 'Start age 65'], ['#1D9E75', 'Start age 67 (dashed)'], ['#BA7517', 'Start age 70 (dashed)']].map(([c, l]) => (
+          {[['#378ADD', 'Start age 65'], ['#1D9E75', 'Start age 67'], ['#BA7517', 'Start age 70']].map(([c, l]) => (
             <span key={l} className={styles.legItem}>
               <span className={styles.legSwatch} style={{ background: c }} />
               {l}
