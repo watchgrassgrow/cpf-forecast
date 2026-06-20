@@ -151,7 +151,8 @@ export default function Dashboard({ summary, form }: Props) {
             selectedPlan={form.cpfPlan}
             payoutStartAge={form.payoutStartAge}
             planHorizon={form.planHorizon}
-            basePayout={monthlyPayout}
+            inflAdj={inflAdj}
+            inflAtPayout={inflAtPayout}
           />
         )}
         {activeTab === 'deferral' && (
@@ -160,6 +161,8 @@ export default function Dashboard({ summary, form }: Props) {
             plan={form.cpfPlan}
             selectedAge={form.payoutStartAge}
             planHorizon={form.planHorizon}
+            inflAdj={inflAdj}
+            inflAtPayout={inflAtPayout}
           />
         )}
         {activeTab === 'retirement' && (
