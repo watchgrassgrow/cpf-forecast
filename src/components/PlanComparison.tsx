@@ -1,4 +1,5 @@
 import React from 'react';
+import { estimateCpfLifePayout } from '../engine/cpfLife';
 import type { CpfPlan } from '../types';
 import styles from './PlanComparison.module.css';
 
@@ -7,10 +8,9 @@ interface Props {
   selectedPlan: CpfPlan;
   payoutStartAge: number;
   planHorizon: number;
-  basePayout: number;
+  inflAdj: boolean;
+  inflAtPayout: number;
 }
-
-const PLAN_RATIO: Record<CpfPlan, number> = { Standard: 1, Escalating: 0.88, Basic: 1.08 };
 
 const PLAN_META: Record<CpfPlan, { badge: string; color: string; growth: string; desc: string; bequestNote: string }> = {
   Standard: {
@@ -50,15 +50,22 @@ function fmtK(n: number): string {
   return `$${Math.round(n / 1000)}k`;
 }
 
-export default function PlanComparison({ raAtPayoutStart, selectedPlan, payoutStartAge, planHorizon, basePayout }: Props) {
+export default function PlanComparison({
+  raAtPayoutStart, selectedPlan, payoutStartAge, planHorizon,
+  inflAdj, inflAtPayout,
+}: Props) {
   const years = planHorizon - payoutStartAge;
   const plans: CpfPlan[] = ['Standard', 'Escalating', 'Basic'];
 
   return (
     <div className={styles.grid}>
       {plans.map(plan => {
-        const pm = Math.round(basePayout * (PLAN_RATIO[plan] / PLAN_RATIO[selectedPlan]));
-        const total = calcTotal(pm, plan, years);
+        // Single source of truth: call the same engine function used for the KPI cards.
+        // No more independent reimplementation of the payout formula in the UI layer.
+        const pmNominal = estimateCpfLifePayout(raAtPayoutStart, plan, payoutStartAge);
+        const pmDisplay = Math.round(inflAdj ? pmNominal / inflAtPayout : pmNominal);
+        const totalNominal = calcTotal(pmNominal, plan, years);
+        const totalDisplay = inflAdj ? totalNominal / inflAtPayout : totalNominal;
         const meta = PLAN_META[plan];
         const isSel = plan === selectedPlan;
 
@@ -69,13 +76,16 @@ export default function PlanComparison({ raAtPayoutStart, selectedPlan, payoutSt
             <div className={styles.badge} style={{ background: `${meta.color}18`, color: meta.color }}>
               {meta.badge}
             </div>
-            <div className={styles.payout}>${pm.toLocaleString('en-SG')}</div>
-            <div className={styles.payoutSub}>per month from age {payoutStartAge}</div>
+            <div className={styles.payout}>${pmDisplay.toLocaleString('en-SG')}</div>
+            <div className={styles.payoutSub}>
+              per month from age {payoutStartAge}
+              {inflAdj && <span style={{ color: 'var(--slate-400)', fontSize: '9px' }}> · today's $</span>}
+            </div>
 
             <div className={styles.rows}>
               <div className={styles.row}>
                 <span>To age {planHorizon}</span>
-                <strong>{fmtK(total)}</strong>
+                <strong>{fmtK(totalDisplay)}</strong>
               </div>
               <div className={styles.row}>
                 <span>Growth</span>
