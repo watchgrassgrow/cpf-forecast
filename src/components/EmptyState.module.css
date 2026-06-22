@@ -28,3 +28,38 @@
   font-size: 11px; font-weight: 700; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
 }
+
+.disclaimer {
+  margin-top: 28px;
+  width: 100%;
+  max-width: 460px;
+  text-align: left;
+  background: #FFFBEB;
+  border: 1px solid #FDE68A;
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+}
+
+.disclaimerHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #92400E;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 8px;
+}
+.disclaimerHeader svg { color: #B45309; flex-shrink: 0; }
+
+.disclaimer p {
+  font-size: 11px;
+  color: #78350F;
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+.disclaimer p:last-child { margin-bottom: 0; }
+.disclaimer strong { font-weight: 600; color: #5C2C06; }
+.disclaimer a { color: #92400E; text-decoration: underline; }
+.disclaimer a:hover { color: #5C2C06; }
