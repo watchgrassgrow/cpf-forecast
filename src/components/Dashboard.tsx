@@ -6,6 +6,7 @@ import DeferralTab from './DeferralTab';
 import RetirementSumTab from './RetirementSumTab';
 import YearTable from './YearTable';
 import LifeEventsTab from './LifeEventsTab';
+import Age55Breakdown from './Age55Breakdown';
 import type { SimSummary, FormState } from '../types';
 import styles from './Dashboard.module.css';
 
@@ -114,6 +115,11 @@ export default function Dashboard({ summary, form }: Props) {
           sub={`Ages ${form.payoutStartAge}–${form.planHorizon} · approximation`}
         />
       </div>
+
+      {/* Age-55 breakdown — always shown when transformation data exists */}
+      {summary.transformation && (
+        <Age55Breakdown summary={summary} form={form} />
+      )}
 
       {/* CPFIS summary banner — shown only when CPFIS is active */}
       {showCpfis && (
