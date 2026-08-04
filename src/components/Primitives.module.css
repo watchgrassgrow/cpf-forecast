@@ -1,0 +1,88 @@
+.chipGroup { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
+.chip {
+  font-size: 12px; padding: 4px 12px;
+  border: 1px solid var(--slate-200); border-radius: 20px;
+  background: white; color: var(--slate-600); cursor: pointer;
+  transition: all .15s; user-select: none;
+}
+.chip:hover { border-color: var(--teal); color: var(--teal); }
+.chipOn { background: var(--teal); border-color: var(--teal); color: white !important; }
+.chipOn:hover { background: var(--teal-dark); }
+
+.field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; }
+.label { font-size: 12px; font-weight: 500; color: var(--slate-600); }
+.tip { font-size: 11px; color: var(--slate-400); line-height: 1.4; }
+
+.sliderHeader { display: flex; align-items: center; justify-content: space-between; }
+.sliderVal { font-size: 12px; font-weight: 600; color: var(--teal); min-width: 48px; text-align: right; }
+
+.inputWrap { position: relative; }
+.prefix {
+  position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+  font-size: 13px; color: var(--slate-400); pointer-events: none;
+}
+
+.sectionLabel {
+  font-size: 10px; font-weight: 600; letter-spacing: .8px;
+  color: var(--slate-400); text-transform: uppercase; margin-bottom: 12px; margin-top: 4px;
+}
+
+.toggle { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.toggleTrack {
+  width: 32px; height: 18px; border-radius: 9px;
+  background: var(--slate-300); position: relative;
+  cursor: pointer; transition: background .15s; flex-shrink: 0;
+  outline: none;
+}
+.toggleTrack:focus-visible { box-shadow: 0 0 0 3px rgba(29,158,117,.3); }
+.toggleOn { background: var(--teal); }
+.toggleKnob {
+  width: 14px; height: 14px; border-radius: 50%;
+  background: white; position: absolute; top: 2px; left: 2px;
+  transition: left .15s;
+}
+.toggleOn .toggleKnob { left: 16px; }
+.toggleLabel { font-size: 13px; color: var(--slate-600); }
+
+.kpiCard {
+  background: white; border: 1px solid var(--slate-200);
+  border-radius: var(--radius-md); padding: 14px 16px;
+  transition: border-color .15s;
+}
+.kpiHighlight { border-color: var(--teal); }
+.kpiLabel {
+  font-size: 10px; font-weight: 600; letter-spacing: .6px;
+  color: var(--slate-400); text-transform: uppercase; margin-bottom: 6px;
+}
+.kpiValue {
+  font-size: 22px; font-weight: 600; color: var(--slate-800);
+  font-family: var(--font-mono); letter-spacing: -0.5px; line-height: 1.1;
+}
+.kpiHighlight .kpiValue { color: var(--teal); }
+.kpiSub { font-size: 11px; color: var(--slate-400); margin-top: 4px; }
+
+.gauge { margin-bottom: 14px; }
+.gaugeHeader {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 5px;
+}
+.gaugeLabel { font-size: 12px; font-weight: 500; color: var(--slate-700); }
+.gaugeDesc { font-size: 11px; color: var(--slate-400); }
+.gaugeStat { font-size: 12px; font-weight: 500; white-space: nowrap; }
+.gaugeTrack {
+  height: 8px; background: var(--slate-100);
+  border-radius: 4px; overflow: hidden; border: 1px solid var(--slate-200);
+}
+.gaugeFill { height: 100%; border-radius: 4px; transition: width .5s cubic-bezier(.4,0,.2,1); }
+
+/* ── Mobile responsive ──────────────────────────────────────────────── */
+@media (max-width: 700px) {
+  .kpiCard { padding: 10px 12px; }
+  .kpiValue { font-size: 18px; }
+  .kpiLabel { font-size: 9px; }
+  .kpiSub { font-size: 10px; }
+}
+
+@media (max-width: 420px) {
+  .kpiValue { font-size: 16px; }
+}
